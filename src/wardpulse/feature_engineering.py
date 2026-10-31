@@ -311,13 +311,29 @@ def build_spatial_intelligence_features(
 
     # Detect coordinate columns if not provided
     if not lat_col or not lon_col:
-        coord_cols = [c for c in out_df.columns if any(k in c.lower() for k in ["lat", "lon"])]
-        lat_col = lat_col or next(
-            (c for c in coord_cols if "lat" in c.lower() and "relat" not in c.lower()), None
-        )
-        lon_col = lon_col or next(
-            (c for c in coord_cols if "lon" in c.lower() or "lng" in c.lower()), None
-        )
+        lat_candidates = ["centroid_lat", "latitude", "lat", "ward_lat", "y_coord", "w_lat"]
+        lon_candidates = ["centroid_lon", "longitude", "lon", "lng", "ward_lon", "x_coord", "w_lon"]
+        lat_col = lat_col or next((c for c in out_df.columns if c.lower() in lat_candidates), None)
+        lon_col = lon_col or next((c for c in out_df.columns if c.lower() in lon_candidates), None)
+        if not lat_col:
+            lat_col = next(
+                (
+                    c
+                    for c in out_df.columns
+                    if "lat" in c.lower()
+                    and not any(k in c.lower() for k in ["popul", "relat", "plate"])
+                ),
+                None,
+            )
+        if not lon_col:
+            lon_col = next(
+                (
+                    c
+                    for c in out_df.columns
+                    if ("lon" in c.lower() or "lng" in c.lower()) and "popul" not in c.lower()
+                ),
+                None,
+            )
 
     # 1. Spatial Neighbour Intelligence (k-NN)
     if lat_col and lon_col and len(out_df) > k_neighbors:
@@ -343,7 +359,9 @@ def build_spatial_intelligence_features(
                 col_vals = out_df[col].astype(float).values
                 means = np.mean(col_vals[neighbour_indices], axis=1)
                 out_df[f"{col}_neighbour_mean"] = np.round(means, 2)
-            logger.info("Generated %d spatial lag features using k=%d", len(lag_candidates), k_neighbors)
+            logger.info(
+                "Generated %d spatial lag features using k=%d", len(lag_candidates), k_neighbors
+            )
 
     # 2. Road to Streetlight Ratio (meters of road per streetlight)
     if "road_length_kms" in out_df.columns and "streetlights" in out_df.columns:
@@ -380,7 +398,11 @@ def build_spatial_intelligence_features(
         has_local = (
             out_df["has_local_police_station"].astype(float)
             if "has_local_police_station" in out_df.columns
-            else (out_df["police_stn"].notnull().astype(float) if "police_stn" in out_df.columns else np.zeros_like(ps))
+            else (
+                out_df["police_stn"].notnull().astype(float)
+                if "police_stn" in out_df.columns
+                else np.zeros_like(ps)
+            )
         )
         composite_safety = ps + 0.5 * fs + 0.5 * has_local
         out_df["public_safety_infra_indicator"] = np.round(composite_safety, 2)
@@ -389,7 +411,11 @@ def build_spatial_intelligence_features(
             out_df["public_safety_per_10k"] = np.round((composite_safety / pop) * 10000.0, 3)
 
     # 6. Green-space Availability Indicator
-    green_cols = [c for c in ["park_area_sq_m", "lake_area_sq_m", "playground_area_sq_m"] if c in out_df.columns]
+    green_cols = [
+        c
+        for c in ["park_area_sq_m", "lake_area_sq_m", "playground_area_sq_m"]
+        if c in out_df.columns
+    ]
     if green_cols and "population_2011" in out_df.columns:
         total_green = out_df[green_cols].astype(float).sum(axis=1)
         pop = np.maximum(out_df["population_2011"].astype(float), 1.0)

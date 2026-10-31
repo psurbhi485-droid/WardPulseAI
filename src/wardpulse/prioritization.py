@@ -158,7 +158,7 @@ def compute_civic_vulnerability_index(
     ward_name_col: str | None = None,
     weights: dict[str, float] | None = None,
 ) -> pd.DataFrame:
-    """Compute a transparent, multi-attribute Civic Vulnerability Index (CVI) without complaint history.
+    """Compute a transparent Civic Vulnerability Index (CVI) without complaint history.
 
     MODE A: SPATIAL VULNERABILITY INTELLIGENCE
     Formulation evaluates 4 physical civic dimensions:
@@ -279,7 +279,9 @@ def compute_civic_vulnerability_index(
         if tier == PriorityTier.HIGH.value:
             return f"High priority for quarterly capital expenditure. Mitigate: {driver}."
         if tier == PriorityTier.MEDIUM.value:
-            return f"Moderate vulnerability: schedule regular infrastructural upgrades for {driver}."
+            return (
+                f"Moderate vulnerability: schedule regular infrastructural upgrades for {driver}."
+            )
         return "Stable infrastructure: maintain standard municipal service monitoring."
 
     actions = [get_cvi_action(t, d) for t, d in zip(tiers, primary_drivers, strict=False)]

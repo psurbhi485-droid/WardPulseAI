@@ -166,7 +166,9 @@ def generate_prediction_grid_submission(
             preds = np.clip(np.round(np.asarray(raw_preds, dtype=float), 2), 0.0, None)
             sub_df["predicted_count"] = preds
         else:
-            logger.warning("Feature mismatch during supervised inference. Falling back to baseline.")
+            logger.warning(
+                "Feature mismatch during supervised inference. Falling back to baseline."
+            )
             mode = "heuristic_baseline"
 
     if mode != "supervised_model" or "predicted_count" not in sub_df.columns:
@@ -192,17 +194,20 @@ def generate_prediction_grid_submission(
 
     # Validation Checks
     exact_row_count = len(sub_df) == 4320
-    exact_columns = list(sub_df.columns) == ["ward_id", "month", "category_group", "predicted_count"]
+    exact_columns = list(sub_df.columns) == [
+        "ward_id",
+        "month",
+        "category_group",
+        "predicted_count",
+    ]
     zero_nulls = int(sub_df.isnull().sum().sum()) == 0
-    zero_duplicates = int(sub_df.duplicated(subset=["ward_id", "month", "category_group"]).sum()) == 0
+    zero_duplicates = (
+        int(sub_df.duplicated(subset=["ward_id", "month", "category_group"]).sum()) == 0
+    )
     all_non_negative = bool((sub_df["predicted_count"] >= 0.0).all())
 
     is_valid = (
-        exact_row_count
-        and exact_columns
-        and zero_nulls
-        and zero_duplicates
-        and all_non_negative
+        exact_row_count and exact_columns and zero_nulls and zero_duplicates and all_non_negative
     )
 
     report = {
@@ -210,7 +215,9 @@ def generate_prediction_grid_submission(
         "row_count": len(sub_df),
         "columns": list(sub_df.columns),
         "null_count": int(sub_df.isnull().sum().sum()),
-        "duplicate_count": int(sub_df.duplicated(subset=["ward_id", "month", "category_group"]).sum()),
+        "duplicate_count": int(
+            sub_df.duplicated(subset=["ward_id", "month", "category_group"]).sum()
+        ),
         "min_predicted_count": float(sub_df["predicted_count"].min()),
         "max_predicted_count": float(sub_df["predicted_count"].max()),
         "mean_predicted_count": float(sub_df["predicted_count"].mean()),
@@ -218,7 +225,7 @@ def generate_prediction_grid_submission(
         "methodology": (
             "Supervised Random Forest / Gradient Boosted Model"
             if mode == "supervised_model"
-            else "Transparent Multi-Factor Physical Infrastructure Demand Baseline (Unsupervised Heuristic)"
+            else "Multi-Factor Infrastructure Demand Baseline (Unsupervised Heuristic)"
         ),
     }
 

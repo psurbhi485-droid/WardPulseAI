@@ -23,7 +23,6 @@ from dashboard.components import (  # noqa: E402
 from dashboard.map_view import render_map_view  # noqa: E402
 from dashboard.overview import render_overview  # noqa: E402
 from dashboard.prediction_view import (  # noqa: E402
-    render_explainability_view,
     render_model_performance_view,
     render_prediction_view,
     render_prioritization_view,
@@ -81,7 +80,10 @@ def render_sidebar() -> str:
         has_trained = "trained_pipeline" in st.session_state
 
         render_status_badge("1. Ingestion", "Completed" if has_dataset else "Needs Data")
-        render_status_badge("2. Spatial k-NN", "Completed" if has_spatial else ("Ready" if has_dataset else "Needs Data"))
+        render_status_badge(
+            "2. Spatial k-NN",
+            "Completed" if has_spatial else ("Ready" if has_dataset else "Needs Data"),
+        )
         render_status_badge("3. Mode A (Vulnerability)", "Ready" if has_dataset else "Needs Data")
         render_status_badge("4. Mode B (Supervised)", "Completed" if has_trained else "Blocked")
         render_status_badge("5. Grid (4,320 rows)", "Ready" if has_dataset else "Needs Data")

@@ -50,13 +50,14 @@ def render_vulnerability_view() -> None:
     """Render Mode A: Spatial Vulnerability Intelligence without complaint history."""
     render_header(
         title="Mode A: Spatial Vulnerability Intelligence",
-        subtitle="Transparent multi-attribute civic vulnerability index from physical infrastructure and demographics",
+        subtitle="Transparent civic vulnerability index from infrastructure and demographics",
     )
 
     st.info(
         "✦ **Operating Mode A (Active)**: In the absence of historical complaint logs, "
         "WardPulse AI evaluates structural municipal vulnerability and infrastructure deficits. "
-        "This output is strictly an **infrastructural vulnerability assessment**, NOT a predicted complaint count."
+        "This output is strictly an **infrastructural vulnerability assessment**, "
+        "NOT a predicted complaint count."
     )
 
     df: pd.DataFrame | None = st.session_state.get("dataset")
@@ -64,9 +65,7 @@ def render_vulnerability_view() -> None:
     if df is None:
         render_empty_state(
             title="Ward Features Required for Vulnerability Assessment",
-            description=(
-                "Vulnerability indexing requires genuine municipal attributes from ward_features.csv."
-            ),
+            description="Vulnerability indexing requires attributes from ward_features.csv.",
             icon="🗺️",
             instructions=[
                 "Navigate to Overview & Data Ingestion",
@@ -78,7 +77,9 @@ def render_vulnerability_view() -> None:
 
     # Interactive Weight Configuration
     with st.expander("⚙️ Configure Component Weights & Scoring Sensitivity", expanded=False):
-        st.caption("Adjust the relative importance of each physical dimension (weights auto-normalize):")
+        st.caption(
+            "Adjust the relative importance of each physical dimension (weights auto-normalize):"
+        )
         col_w1, col_w2, col_w3, col_w4 = st.columns(4)
         with col_w1:
             w_demo = st.slider("Demographic Strain", 0.05, 0.60, 0.25, 0.05)
@@ -152,7 +153,10 @@ def render_vulnerability_view() -> None:
                 "Low": "#10B981",
             },
             title="Top 15 Most Vulnerable Wards (Civic Vulnerability Index)",
-            labels={"civic_vulnerability_index": "Vulnerability Score (0-100)", "ward_name": "Ward"},
+            labels={
+                "civic_vulnerability_index": "Vulnerability Score (0-100)",
+                "ward_name": "Ward",
+            },
             height=480,
         )
         style_plotly_chart(fig_bar)
@@ -967,8 +971,8 @@ def render_submission_export_view() -> None:
         )
     else:
         st.info(
-            "✦ **Heuristic Baseline Mode (Mode A)**: Historical complaint logs have not been uploaded. "
-            "Predictions are generated from physical municipal infrastructure intensity "
+            "✦ **Heuristic Baseline Mode (Mode A)**: Historical complaints not uploaded. "
+            "Predictions are derived from physical municipal infrastructure intensity "
             "(density, road network, and domain weights). Strictly labeled as a baseline."
         )
 

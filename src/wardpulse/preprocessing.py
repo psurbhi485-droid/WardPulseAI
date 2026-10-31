@@ -218,9 +218,29 @@ def clean_ward_features(
         cleaned["police_stn"] = cleaned["police_stn"].fillna("None")
 
     # Coordinate validation
-    coord_cols = [c for c in cleaned.columns if any(k in c.lower() for k in ["lat", "lon"])]
-    lat_col = next((c for c in coord_cols if "lat" in c.lower() and "relat" not in c.lower()), None)
-    lon_col = next((c for c in coord_cols if "lon" in c.lower() or "lng" in c.lower()), None)
+    lat_candidates = ["centroid_lat", "latitude", "lat", "ward_lat", "y_coord", "w_lat"]
+    lon_candidates = ["centroid_lon", "longitude", "lon", "lng", "ward_lon", "x_coord", "w_lon"]
+    lat_col = next((c for c in cleaned.columns if c.lower() in lat_candidates), None)
+    lon_col = next((c for c in cleaned.columns if c.lower() in lon_candidates), None)
+    if not lat_col:
+        lat_col = next(
+            (
+                c
+                for c in cleaned.columns
+                if "lat" in c.lower()
+                and not any(k in c.lower() for k in ["popul", "relat", "plate"])
+            ),
+            None,
+        )
+    if not lon_col:
+        lon_col = next(
+            (
+                c
+                for c in cleaned.columns
+                if ("lon" in c.lower() or "lng" in c.lower()) and "popul" not in c.lower()
+            ),
+            None,
+        )
 
     if lat_col and lon_col:
         lat_valid = cleaned[lat_col].between(-90.0, 90.0) & cleaned[lat_col].notnull()

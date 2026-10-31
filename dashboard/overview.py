@@ -12,7 +12,6 @@ from dashboard.components import (
     render_empty_state,
     render_header,
     render_metric_card,
-    render_status_badge,
 )
 from wardpulse.config import RAW_DATA_DIR
 from wardpulse.data_loader import list_available_raw_datasets, load_csv, load_dataset, load_geojson
@@ -86,14 +85,18 @@ def render_overview() -> None:
                 engineered_df = build_spatial_intelligence_features(cleaned_df, k_neighbors=4)
 
                 st.session_state["dataset"] = engineered_df
-                st.session_state["dataset_name"] = "Official BBMP Bangalore Wards (ward_features.csv)"
+                st.session_state["dataset_name"] = (
+                    "Official BBMP Bangalore Wards (ward_features.csv)"
+                )
                 st.session_state["clean_report"] = clean_report
                 st.session_state["spatial_engineered"] = True
 
                 if official_geojson_path.exists():
                     st.session_state["geojson"] = load_geojson(official_geojson_path)
 
-                st.success("Successfully loaded official BBMP dataset, spatial features, and boundary geometry!")
+                st.success(
+                    "Successfully loaded official BBMP dataset, spatial features, and boundaries!"
+                )
                 st.rerun()
             except Exception as exc:
                 st.error(f"Error loading official bundle: {exc}")

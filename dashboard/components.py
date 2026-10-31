@@ -378,11 +378,12 @@ def render_status_badge(label: str, status: str) -> None:
         "Blocked": ("#EF4444", "rgba(239, 68, 68, 0.15)", "✕"),
     }
     color, bg, icon = colors_map.get(status, ("#64748B", "rgba(100, 116, 139, 0.15)", "○"))
-    html = f"""
-    <div style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px;
-                border-radius: 9999px; background: {bg}; border: 1px solid {color}40; margin: 3px 0;">
-        <span style="font-size: 0.75rem; color: {color};">{icon}</span>
-        <span style="font-size: 0.8rem; font-weight: 600; color: {color};">{label}: {status}</span>
-    </div>
-    """
+    html = (
+        f'<div style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; '
+        f'border-radius: 9999px; background: {bg}; border: 1px solid {color}40; margin: 3px 0;">'
+        f'<span style="font-size: 0.75rem; color: {color};">{icon}</span>'
+        f'<span style="font-size: 0.8rem; font-weight: 600; color: {color};">'
+        f"{label}: {status}</span>"
+        f"</div>"
+    )
     st.markdown(html, unsafe_allow_html=True)

@@ -425,3 +425,109 @@ def test_official_bangalore_datasets_integrity() -> None:
     if sub_path.exists():
         df_sub = load_csv(sub_path)
         assert "predicted_count" in df_sub.columns
+
+
+def test_build_spatial_intelligence_features() -> None:
+    """Validate 4-nearest-neighbor spatial lag generation and physical ratios."""
+    df = pd.DataFrame(
+        {
+            "ward_id": [1, 2, 3, 4, 5],
+            "centroid_lat": [12.91, 12.92, 12.93, 12.94, 12.95],
+            "centroid_lon": [77.51, 77.52, 77.53, 77.54, 77.55],
+            "road_length_kms": [10, 20, 30, 40, 50],
+            "streetlights": [100, 200, 300, 400, 500],
+            "households_census_2011": [1000, 2000, 3000, 4000, 5000],
+            "bus_stops": [10, 20, 30, 40, 50],
+            "population_2011": [5000, 10000, 15000, 20000, 25000],
+            "population_density_2011_persons_sq_km": [2000.0, 3000.0, 4000.0, 5000.0, 6000.0],
+            "decadal_popn_growth_rate_2011_2001": [50.0, 60.0, 70.0, 80.0, 90.0],
+            "police_stations": [1, 1, 2, 2, 3],
+            "park_area_sq_m": [1000.0, 2000.0, 3000.0, 4000.0, 5000.0],
+        }
+    )
+
+    enriched = build_spatial_intelligence_features(df, k_neighbors=4)
+
+    assert "road_length_kms_neighbour_mean" in enriched.columns
+    assert "road_to_streetlight_ratio" in enriched.columns
+    assert "household_to_bus_stop_ratio" in enriched.columns
+    assert "population_density_strain" in enriched.columns
+    assert "public_safety_infra_indicator" in enriched.columns
+    assert "greenspace_sq_m_per_capita" in enriched.columns
+
+    # Check safe division (meters per light = (10 * 1000) / 100 = 100.0)
+    assert enriched["road_to_streetlight_ratio"].iloc[0] == 100.0
+    # Households per bus stop = 1000 / 10 = 100.0
+    assert enriched["household_to_bus_stop_ratio"].iloc[0] == 100.0
+
+
+def test_compute_civic_vulnerability_index() -> None:
+    """Validate Mode A Civic Vulnerability Index calculation and ranking."""
+    df = pd.DataFrame(
+        {
+            "ward_id": [1, 2, 3],
+            "ward_name": ["Ward Alpha", "Ward Beta", "Ward Gamma"],
+            "population_density_strain": [0.1, 0.5, 0.9],
+            "road_to_streetlight_ratio": [20.0, 50.0, 90.0],
+            "household_to_bus_stop_ratio": [100.0, 300.0, 800.0],
+            "greenspace_sq_m_per_capita": [50.0, 20.0, 2.0],
+            "public_safety_per_10k": [1.0, 0.5, 0.1],
+        }
+    )
+
+    cvi_df = compute_civic_vulnerability_index(df)
+
+    assert len(cvi_df) == 3
+    assert list(cvi_df["vulnerability_rank"]) == [1, 2, 3]
+    # Gamma has highest deficits, should be ranked #1
+    assert cvi_df["ward_id"].iloc[0] == 3
+    assert cvi_df["civic_vulnerability_index"].iloc[0] == 100.0
+    assert "primary_vulnerability_driver" in cvi_df.columns
+    assert "vulnerability_tier" in cvi_df.columns
+    assert "recommended_action" in cvi_df.columns
+    assert "metric_type" in cvi_df.columns
+
+
+def test_generate_prediction_grid_submission() -> None:
+    """Validate Phase 5 prediction grid submission generation and verification."""
+    # 2 wards x 2 months x 2 categories = 8 rows test
+    grid = pd.DataFrame(
+        {
+            "ward_id": [1, 1, 1, 1, 2, 2, 2, 2],
+            "month": [
+                "2024-01",
+                "2024-01",
+                "2024-02",
+                "2024-02",
+                "2024-01",
+                "2024-01",
+                "2024-02",
+                "2024-02",
+            ],
+            "category_group": [
+                "electrical",
+                "roads",
+                "electrical",
+                "roads",
+                "electrical",
+                "roads",
+                "electrical",
+                "roads",
+            ],
+        }
+    )
+    features = pd.DataFrame(
+        {
+            "ward_id": [1, 2],
+            "population_2011": [20000, 40000],
+        }
+    )
+
+    sub, report = generate_prediction_grid_submission(grid, features, mode="heuristic_baseline")
+
+    assert len(sub) == 8
+    assert list(sub.columns) == ["ward_id", "month", "category_group", "predicted_count"]
+    assert report["null_count"] == 0
+    assert report["duplicate_count"] == 0
+    assert (sub["predicted_count"] >= 0.0).all()
+    assert report["operating_mode"] == "heuristic_baseline"
