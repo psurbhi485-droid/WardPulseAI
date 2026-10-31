@@ -1,0 +1,62 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Testing and code quality
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Streamlit
+.streamlit/
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large dataset dumps and model binaries (keep directory structure via .gitkeep)
+data/raw/official/*
+!data/raw/official/.gitkeep
+data/raw/manual_test/*
+!data/raw/manual_test/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+artifacts/models/*
+!artifacts/models/.gitkeep
+artifacts/reports/*
+!artifacts/reports/.gitkeep
