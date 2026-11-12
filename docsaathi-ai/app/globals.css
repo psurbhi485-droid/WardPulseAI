@@ -1,0 +1,320 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #FFF4EC;
+  --bg-secondary: #FCE8DC;
+  --peach: #F8DCCB;
+  --soft-coral: #EBAF91;
+  --terracotta: #C47C60;
+  --dark-brown: #49352E;
+  --white: #FFFFFF;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--dark-brown);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--soft-coral);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--terracotta);
+}
+
+/* Custom animations */
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(196, 124, 96, 0.5); }
+  70% { transform: scale(1); box-shadow: 0 0 0 16px rgba(196, 124, 96, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(196, 124, 96, 0); }
+}
+
+@keyframes waveform {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+.animate-waveform {
+  animation: waveform 0.8s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Shimmer skeleton loader */
+.shimmer {
+  background: linear-gradient(90deg, var(--peach) 25%, var(--soft-coral) 50%, var(--peach) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Peach gradient backgrounds */
+.bg-peach-gradient {
+  background: linear-gradient(135deg, #FFF4EC 0%, #FCE8DC 50%, #F8DCCB 100%);
+}
+
+.bg-peach-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF4EC 100%);
+}
+
+/* Focus states */
+input:focus,
+textarea:focus,
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 2px;
+}
+
+/* Transition utilities */
+.transition-smooth {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Drop zone */
+.drop-zone-active {
+  border-color: var(--terracotta) !important;
+  background-color: rgba(196, 124, 96, 0.08) !important;
+}
+
+/* Prose styles for AI responses */
+.prose-peach h1, .prose-peach h2, .prose-peach h3 {
+  color: var(--dark-brown);
+  font-weight: 700;
+}
+.prose-peach p {
+  color: #6b4a3e;
+  line-height: 1.75;
+}
+.prose-peach strong {
+  color: var(--terracotta);
+}
+.prose-peach ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+.prose-peach li {
+  color: #6b4a3e;
+  margin-bottom: 0.4rem;
+}
+
+/* Microphone states */
+.mic-idle { background: linear-gradient(135deg, #C47C60, #EBAF91); }
+.mic-listening { background: linear-gradient(135deg, #e05c3a, #C47C60); }
+.mic-processing { background: linear-gradient(135deg, #8b6358, #C47C60); }
+.mic-speaking { background: linear-gradient(135deg, #5a8f6b, #7cbf8e); }
+.mic-error { background: linear-gradient(135deg, #bf5a5a, #e07a7a); }
+
+/* Waveform bars */
+.waveform-bar {
+  width: 4px;
+  border-radius: 2px;
+  background: var(--terracotta);
+  transform-origin: bottom;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(196, 124, 96, 0.18);
+}
+
+/* Category card gradient borders */
+.category-card {
+  position: relative;
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
+}
+.category-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #EBAF91, #C47C60);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+
+/* ─── Regional Environment Animations ───────────────────────────────────────── */
+
+@keyframes cloudDrift {
+  0% { transform: translateX(-120px); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateX(900px); opacity: 0; }
+}
+
+@keyframes birdFly {
+  0% { transform: translate(-100px, 0px); opacity: 0; }
+  10% { opacity: 1; }
+  50% { transform: translate(400px, -30px); }
+  90% { opacity: 1; }
+  100% { transform: translate(900px, -20px); opacity: 0; }
+}
+
+@keyframes waterRipple {
+  0%, 100% { d: path("M0,10 Q40,5 80,10 Q120,15 160,10"); opacity: 0.6; }
+  50% { d: path("M0,10 Q40,15 80,10 Q120,5 160,10"); opacity: 0.9; }
+}
+
+@keyframes boatBob {
+  0%, 100% { transform: translateY(0px) rotate(-0.5deg); }
+  50% { transform: translateY(-3px) rotate(0.5deg); }
+}
+
+@keyframes treeSway {
+  0%, 100% { transform-origin: bottom center; transform: rotate(-1.5deg); }
+  50% { transform-origin: bottom center; transform: rotate(1.5deg); }
+}
+
+@keyframes sunGlow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(255,200,80,0.6)); }
+  50% { filter: drop-shadow(0 0 20px rgba(255,200,80,0.9)); }
+}
+
+@keyframes waveRoll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-160px); }
+}
+
+@keyframes assistantWave {
+  0%, 100% { transform: rotate(0deg); transform-origin: bottom left; }
+  25% { transform: rotate(-30deg); transform-origin: bottom left; }
+  75% { transform: rotate(-10deg); transform-origin: bottom left; }
+}
+
+@keyframes assistantBreathe {
+  0%, 100% { transform: scaleY(1); transform-origin: bottom center; }
+  50% { transform: scaleY(1.02); transform-origin: bottom center; }
+}
+
+@keyframes assistantBounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes thinkBob {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@keyframes regionFadeIn {
+  from { opacity: 0; transform: scale(1.02); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes transitionOverlay {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.animate-cloud-drift { animation: cloudDrift linear infinite; }
+.animate-bird-fly { animation: birdFly linear infinite; }
+.animate-boat-bob { animation: boatBob ease-in-out infinite; }
+.animate-tree-sway { animation: treeSway ease-in-out infinite; }
+.animate-sun-glow { animation: sunGlow ease-in-out infinite 2s; }
+.animate-wave-roll { animation: waveRoll linear infinite; }
+.animate-assistant-wave { animation: assistantWave ease-in-out infinite 1.2s; }
+.animate-assistant-breathe { animation: assistantBreathe ease-in-out infinite 3s; }
+.animate-assistant-bounce { animation: assistantBounce ease-in-out infinite 0.6s; }
+.animate-think-bob { animation: thinkBob ease-in-out infinite 1.5s; }
+.animate-region-fade-in { animation: regionFadeIn 0.5s ease-out forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-cloud-drift,
+  .animate-bird-fly,
+  .animate-boat-bob,
+  .animate-tree-sway,
+  .animate-sun-glow,
+  .animate-wave-roll,
+  .animate-assistant-wave,
+  .animate-assistant-breathe,
+  .animate-assistant-bounce,
+  .animate-think-bob {
+    animation: none !important;
+  }
+}
+
+/* Regional environment container */
+.regional-env {
+  animation: regionFadeIn 0.5s ease-out;
+}
